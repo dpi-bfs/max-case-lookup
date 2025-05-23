@@ -3,7 +3,7 @@ import Boom from '@hapi/boom'
 // import * as Globals from './globals.js'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
-import * as CarriersInfoReturnPacket from './localLibrary/carriersInfoReturnPacket.js';
+import * as ReturnPacket from './localLibrary/returnPacket.js';
 // import * as FormLookupReturnPacket from './formLookupReturnPacket.js'
 
 export async function post(
@@ -51,7 +51,7 @@ export async function post(
       throw Boom.notFound(); // Raises a 404
     }
     
-    return CarriersInfoReturnPacket.getPacket(flowCarriers, response.statusCode, PaperCertificateNumber)  
+    return ReturnPacket.getPacket(flowCarriers, response.statusCode, PaperCertificateNumber)  
     
     // Returning a well formed object, without error codes, is enough for the OneBlink UI's Data lookup element
     // to register this as valid.
