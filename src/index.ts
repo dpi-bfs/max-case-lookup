@@ -23,15 +23,22 @@ export async function post(
   }
   const { submission } = request.body
 
-  const PaperCertificateNumber: ProjectTypes.RecordOfMovementAndInspection["PaperCertificateNumber"] = submission["PaperCertificateNumber"]
-  console.log("PaperCertificateNumber", PaperCertificateNumber);
+  const MaxCaseItemId: ProjectTypes.FlowRequestData["MaxCaseItemId"] = parseInt(submission["MaxCaseItemId"]);
+  console.log("MaxCaseItemId", MaxCaseItemId);
 
-  if (!PaperCertificateNumber) {
-    throw Boom.badRequest(`"PaperCertificateNumber isn't giving us a value: ${PaperCertificateNumber}`)
+  if (!MaxCaseItemId) {
+    throw Boom.badRequest(`"MaxCaseItemId isn't giving us a value: ${MaxCaseItemId}`)
   }
 
   try {
-    const data = { PaperCertificateNumber: PaperCertificateNumber };
+    const data: ProjectTypes.FlowRequestData = {
+      FormName: request.body.definition.name,
+      FormId: request.body.definition.id,
+      MaxCaseItemId: MaxCaseItemId,
+      MaxProjectName: submission.MaxProjectName,
+      MaxEnvironment: submission.MaxEnvironment,
+      MaxSiteId: submission.MaxSiteId
+    };
     const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
     const headers: Record<string, string>[] = [
       { "x-power_automate_secret_key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
@@ -44,15 +51,15 @@ export async function post(
 
     console.log("response", response);
     
-    const flowCarriers: ProjectTypes.FlowCarrierData[] = JSON.parse(response.body)
+    const flowResponseData: ProjectTypes.FlowResponseData[] = JSON.parse(response.body)
 
-    console.log("flowCarriers", flowCarriers);
+    console.log("flowResponseData", flowResponseData);
 
-    if (flowCarriers.length === 0) {
+    if (flowResponseData.length === 0) {
       throw Boom.notFound(); // Raises a 404
     }
     
-    return ReturnPacket.getPacket(flowCarriers, response.statusCode, PaperCertificateNumber)  
+    return ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId)  
     
     // Returning a well formed object, without error codes, is enough for the OneBlink UI's Data lookup element
     // to register this as valid.
@@ -75,7 +82,7 @@ export async function post(
       <br /> if you want an end of line 
     */
     if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
-      throw Boom.badRequest(`The 'Paper certificate number', ${PaperCertificateNumber}, could not be found in the database. Are you sure this is the number on your Carrier Biosecurity Certificate? You must include the alphabetical prefix, for example 'P1234'.`)
+      throw Boom.badRequest(`The 'Max case item id', ${MaxCaseItemId}, could not be found in the database. Are you sure this is the right number?`)
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
       throw Boom.badRequest(`The validation service was down. We did not receive a response from the server`)
