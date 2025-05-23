@@ -1,0 +1,44 @@
+{
+  "name": "max-case-lookup",
+  "description": "Returns some basic details about a case given a Max CaseItemId and SiteId.",
+  "license": "ISC",
+  "type": "module",
+  "main": "./out/index.js",
+  "scripts": {
+    "watch-typescript": "npx tsc --watch",
+    "copy-assets": "copyfiles -u 1 src/templates/*.mustache out",
+    "watch-assets": "chokidar \"src/templates/**/*\" -c \"npm run copy-assets\" --initial",
+    "clean": "rimraf out",
+    "watch": "npm-run-all clean --parallel watch-assets watch-typescript",
+    "local-serve": "npx oneblink api serve --env local;Get-Date",
+    "debug": "npm-run-all --serial watch-typescript local-serve"
+  },
+  "dependencies": {
+    "@hapi/boom": "^10.0.1",
+    "@oneblink/sdk": "^11.3.1",
+    "abort-controller": "^3.0.0",
+    "axios": "^1.9.0",
+    "form-data": "^4.0.2",
+    "juice": "^11.0.1",
+    "moment-timezone": "^0.5.48",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "@oneblink/cli": "^3.5.7",
+    "@oneblink/types": "github:oneblink/types",
+    "@types/mustache": "^4.2.6",
+    "@types/uuid": "^10.0.0",
+    "chokidar-cli": "^3.0.0",
+    "copyfiles": "^2.4.1",
+    "npm-check-updates": "^18.0.1",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=12",
+    "npm": ">=6"
+  }
+}
