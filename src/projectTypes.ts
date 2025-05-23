@@ -22,12 +22,12 @@ export interface FlowRequestData {
 }
 
 export interface FlowResponseData {
-    CaseItemId: number,
-    SiteId: string
-    IdentifierTypeValue: string,
-    PicHolding: string,
-    PropertyAddress: string
-    PropertyCity: string
+  CaseItemId: number,
+  SiteId: string
+  IdentifierTypeValue: string,
+  PicHolding: string,
+  PropertyAddress: string
+  PropertyCity: string
 }
 
 
@@ -79,11 +79,11 @@ export interface FlowResponseData {
 //   TaxInvoicePdf: string | undefined
 // }
 
-// export interface RecordOfMovementAndInspection extends 
-//   BaseFormSubmissionProjectSpecific, 
-//   ApprovalFormSubmissionProjectSpecific, 
+// export interface RecordOfMovementAndInspection extends
+//   BaseFormSubmissionProjectSpecific,
+//   ApprovalFormSubmissionProjectSpecific,
 //   FormApprovalFlowInstanceSubset,
-//   ExtraData, 
+//   ExtraData,
 //   PaymentDataToDatabase
 //   {
 //   }

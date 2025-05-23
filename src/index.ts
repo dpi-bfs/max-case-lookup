@@ -59,7 +59,9 @@ export async function post(
       throw Boom.notFound(); // Raises a 404
     }
     
-    return ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId)  
+    const returnPacketToOB = ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId) 
+    console.log("returnPacketToOB", returnPacketToOB)
+    return returnPacketToOB
     
     // Returning a well formed object, without error codes, is enough for the OneBlink UI's Data lookup element
     // to register this as valid.
