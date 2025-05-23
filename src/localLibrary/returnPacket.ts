@@ -51,10 +51,10 @@ export function getPacket(
       `<table>
       <thead>
         <tr>
-          <td>IdentifierTypeValue</td>
-          <td>PicHolding</td>
-          <td>PropertyAddress</td>
-          <td>PropertyCity</td>
+          <td>Identifier type value</td>
+          <td>Pic holding</td>
+          <td>Property address</td>
+          <td>Property city</td>
         </tr>
       </thead>
       <tbody>
