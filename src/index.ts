@@ -1,6 +1,5 @@
 import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
-// import * as Globals from './globals.js'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
 import * as ReturnPacket from './localLibrary/returnPacket.js';
@@ -8,11 +7,13 @@ import * as ReturnPacket from './localLibrary/returnPacket.js';
 
 export async function post(
   request: OneBlinkAPIHostingRequest<{
-    definition: Record<string, any>
     element: Record<string, any>
+    definition: Record<string, any>
     submission: Record<string, string>
   }>,
 ) {
+
+  // console.log("request.body", request.body);
 
   const triggerElementName = request.body.element.name;
   console.log("triggerElementName", triggerElementName);
@@ -31,9 +32,9 @@ export async function post(
 
   try {
     const data = { PaperCertificateNumber: PaperCertificateNumber };
-    const url = process.env.POWER_AUTOMATE_CERTIFICATE_VALIDATOR_URL!;
+    const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
     const headers: Record<string, string>[] = [
-      { "x-parthenium-certificate-validator-secret-key-id": process.env.X_PARTHENIUM_CERTIFICATE_VALIDATOR_SECRET_KEY_ID! },
+      { "x-power_automate_secret_key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
       { "origin": String(request.headers.origin) }
     ];
     const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(data, url, headers)
