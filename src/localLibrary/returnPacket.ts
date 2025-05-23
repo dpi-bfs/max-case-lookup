@@ -13,33 +13,39 @@ return {
 }  
 **/
 export function getPacket(
-  flowResponseData: ProjectTypes.FlowResponseData[],
+  flowResponseData: ProjectTypes.FlowResponseData | ProjectTypes.FlowResponseData[],
   statusCode: DatabaseResponse["statusCode"],
   maxCaseItemId: number) {
 
-  //## Initialize 
+  //## Initialize
 
   // const newParagraph = '<p><br /></p>'
+  
+  console.log('In getPacket > flowResponseData', flowResponseData);
+
+  const rows = Array.isArray(flowResponseData)
+    ? flowResponseData
+    : [flowResponseData];
+  
+  console.log('In getPacket > rows', rows);
 
   // Null can be assigned to a OneBlink text element.
   var tableHtml = null
-  var maxCaseResponseTextHtml = null // We insert into a text element then an Info element references this
+  var maxCaseResponseTextHtml:string | null = null // We insert into a text element then an Info element references this
   
   let foundInDatabase = false
   if (statusCode == 200) {
     foundInDatabase = true
 
-    let tableRows = ''
-
-    flowResponseData.forEach((element: ProjectTypes.FlowResponseData, index) => {
-      tableRows +=
-        `<tr>
-        <td>${element.IdentifierTypeValue}</td>
-        <td>${element.PicHolding}</td>
-        <td>${element.PropertyAddress}</td>
-        <td>${element.PropertyCity}</td>
-      </tr>`
-    })
+    const tableRows = rows
+      .map(r => `
+        <tr>
+          <td>${r.IdentifierTypeValue}</td>
+          <td>${r.PicHolding}</td>
+          <td>${r.PropertyAddress}</td>
+          <td>${r.PropertyCity}</td>
+        </tr>`)
+      .join('');
 
     tableHtml = 
       `<table>
