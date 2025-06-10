@@ -41,7 +41,7 @@ export async function post(
     };
     const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
     const headers: Record<string, string>[] = [
-      { "x-power_automate_secret_key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
+      { "x-power-automate-secret-key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
       { "origin": String(request.headers.origin) }
     ];
     const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(data, url, headers)
