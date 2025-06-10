@@ -15,7 +15,8 @@ return {
 export function getPacket(
   flowResponseData: ProjectTypes.FlowResponseData | ProjectTypes.FlowResponseData[],
   statusCode: DatabaseResponse["statusCode"],
-  maxCaseItemId: number) {
+  maxCaseItemId: number,
+  triggerElementLabel: string) {
 
   //## Initialize
 
@@ -63,7 +64,7 @@ export function getPacket(
     </table>`
 
     maxCaseResponseTextHtml =
-      `<p>For 'Max case item id' ${maxCaseItemId} we found a match with the following details.</p>
+      `<p>For '${triggerElementLabel}' ${maxCaseItemId} we found a match with the following details.</p>
       <p><br /></p>` 
       + tableHtml
 

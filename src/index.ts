@@ -16,6 +16,8 @@ export async function post(
   // console.log("request.body", request.body);
 
   const triggerElementName = request.body.element.name;
+  const triggerElementLabel = request.body.element.label;
+
   console.log("triggerElementName", triggerElementName);
   
   if (!request || !request.body || !request.body.submission) {
@@ -25,10 +27,10 @@ export async function post(
 
   // Don't type check  MaxCaseItemId as we want to allow the triggerElementName to be changeable by the using developer 
   const MaxCaseItemId = parseInt(submission[triggerElementName]);
-  console.log(`${triggerElementName} MaxCaseItemId`, MaxCaseItemId);
+  console.log(`triggerElementName: ${triggerElementName} (MaxCaseItemId)`, MaxCaseItemId);
 
   if (!MaxCaseItemId) {
-    throw Boom.badRequest(`${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
+    throw Boom.badRequest(`triggerElementName ${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
   }
 
   try {
@@ -60,7 +62,7 @@ export async function post(
       throw Boom.notFound(); // Raises a 404
     }
     
-    const returnPacketToOB = ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId) 
+    const returnPacketToOB = ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId, triggerElementLabel) 
     console.log("returnPacketToOB", returnPacketToOB)
     return returnPacketToOB
     
