@@ -23,11 +23,12 @@ export async function post(
   }
   const { submission } = request.body
 
-  const MaxCaseItemId: ProjectTypes.FlowRequestData["MaxCaseItemId"] = parseInt(submission["MaxCaseItemId"]);
-  console.log("MaxCaseItemId", MaxCaseItemId);
+  // Don't type check  MaxCaseItemId as we want to allow the triggerElementName to be changeable by the using developer 
+  const MaxCaseItemId = parseInt(submission[triggerElementName]);
+  console.log(`${triggerElementName} MaxCaseItemId`, MaxCaseItemId);
 
   if (!MaxCaseItemId) {
-    throw Boom.badRequest(`"MaxCaseItemId isn't giving us a value: ${MaxCaseItemId}`)
+    throw Boom.badRequest(`${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
   }
 
   try {
@@ -35,9 +36,9 @@ export async function post(
       FormName: request.body.definition.name,
       FormId: request.body.definition.id,
       MaxCaseItemId: MaxCaseItemId,
-      MaxProjectName: submission.MaxProjectName,
-      MaxEnvironment: submission.MaxEnvironment,
-      MaxSiteId: submission.MaxSiteId
+      MaxCaseLookup_MaxProjectName: submission.MaxCaseLookup_MaxProjectName,
+      MaxCaseLookup_MaxEnvironment: submission.MaxCaseLookup_MaxEnvironment,
+      MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
     };
     const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
     const headers: Record<string, string>[] = [

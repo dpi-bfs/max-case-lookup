@@ -16,9 +16,9 @@ export interface FlowRequestData {
   FormName: string,
   FormId: number,
   MaxCaseItemId: number,
-  MaxProjectName: string,
-  MaxEnvironment: string,
-  MaxSiteId: string
+  MaxCaseLookup_MaxProjectName: string,
+  MaxCaseLookup_MaxEnvironment: string,
+  MaxCaseLookup_MaxSiteId: string
 }
 
 export interface FlowResponseData {
