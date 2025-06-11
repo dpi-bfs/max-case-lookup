@@ -73,8 +73,9 @@ export function getPacket(
   console.log("Returning some data")
 
   // The value side must be a string, except for switches which can be a boolean
+  // Use a string (and a radio button element) if you need three values: true, false, and null (not set)
   return {
-    "MaxCaseLookup_FoundInDatabase": foundInDatabase,
+    "MaxCaseLookup_FoundInDatabase": `${foundInDatabase}`,
     "MaxCaseLookup_ResponseFoundText": maxCaseResponseTextHtml,
     "ApiCodeVersionText": process.env.API_CODE_VERSION
   }

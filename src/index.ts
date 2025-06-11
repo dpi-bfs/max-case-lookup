@@ -3,6 +3,8 @@ import Boom from '@hapi/boom'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
 import * as ReturnPacket from './localLibrary/returnPacket.js';
+import * as JsonTools from './localLibrary/jsonTools.js';
+
 // import * as FormLookupReturnPacket from './formLookupReturnPacket.js'
 
 export async function post(
@@ -28,6 +30,11 @@ export async function post(
   // Don't type check  MaxCaseItemId as we want to allow the triggerElementName to be changeable by the using developer 
   const MaxCaseItemId = parseInt(submission[triggerElementName]);
   console.log(`triggerElementName: ${triggerElementName} (MaxCaseItemId)`, MaxCaseItemId);
+
+  const allElements = JsonTools.flattenElements(request.body.definition.elements)
+  const maxCaseLookupResponseNotFoundAppendInfoDefaultValue  = allElements.find(
+    (el: { name: string; }) => el.name === "MaxCaseLookup_ResponseNotFound_AppendInfo"
+  )?.defaultValue;
 
   if (!MaxCaseItemId) {
     throw Boom.badRequest(`triggerElementName ${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
@@ -87,7 +94,8 @@ export async function post(
       <br /> if you want an end of line 
     */
     if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
-      throw Boom.badRequest(`The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database.`)
+      const notFoundMessageHtml = `The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database.` + ' ' + maxCaseLookupResponseNotFoundAppendInfoDefaultValue
+      throw Boom.badRequest(notFoundMessageHtml)
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
       throw Boom.badRequest(`The validation service was down. We did not receive a response from the server`)
