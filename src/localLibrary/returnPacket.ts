@@ -75,7 +75,7 @@ export function getPacket(
   // The value side must be a string, except for switches which can be a boolean
   return {
     "FoundInDatabase": `${foundInDatabase}`,
-    "MaxCaseLookup_ResponseText": maxCaseResponseTextHtml,
+    "MaxCaseLookup_ResponseFoundText": maxCaseResponseTextHtml,
     "ApiCodeVersionText": process.env.API_CODE_VERSION
   }
 }
