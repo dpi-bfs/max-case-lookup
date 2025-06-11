@@ -87,7 +87,7 @@ export async function post(
       <br /> if you want an end of line 
     */
     if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
-      throw Boom.badRequest(`The 'Max case item id', ${MaxCaseItemId}, could not be found in the database. Are you sure this is the right number?`)
+      throw Boom.badRequest(`The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database. Are you sure this is the right number?`)
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
       throw Boom.badRequest(`The validation service was down. We did not receive a response from the server`)
