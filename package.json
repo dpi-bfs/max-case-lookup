@@ -27,6 +27,7 @@
   "devDependencies": {
     "@oneblink/cli": "^3.5.7",
     "@oneblink/types": "github:oneblink/types",
+    "@types/luxon": "^3.6.2",
     "@types/mustache": "^4.2.6",
     "@types/uuid": "^10.0.0",
     "chokidar-cli": "^3.0.0",
