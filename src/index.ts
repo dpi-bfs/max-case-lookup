@@ -100,9 +100,9 @@ export async function post(
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
       const notFoundServiceDownHtml =
-      `<P>The lookup service was down. (Technical details: Max or Power Automate is probably down)</p>
+      `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
       <p><br /></p>
-      <P>Pleas continue to fill the form and submit without the lookup.</p>`
+      <P>(Technical details: Max or Power Automate is probably down)</p>`
 
       responseToOneBlink = {
         MaxCaseLookup_FoundInDatabase: 'Not found - service down',
