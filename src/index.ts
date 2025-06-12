@@ -94,15 +94,20 @@ export async function post(
       <br /><br /> if you want paragraphs; and
       <br /> if you want an end of line 
     */
+    let notFoundServiceDownHtml; 
     if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
       const notFoundMessageHtml = `The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database.` + ' ' + maxCaseLookupResponseNotFoundAppendInfoDefaultValue
       throw Boom.badRequest(notFoundMessageHtml)
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
-      const notFoundServiceDownHtml =
+      // Simulate by choosing Fire Ant Carriers dev
+
+      notFoundServiceDownHtml =
       `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
       <p><br /></p>
-      <P>(Technical details: Max or Power Automate is probably down)</p>`
+      <P>(Technical details: Max is probably down; but also check if Power Automate is down.)</p>`
+
+      console.log(notFoundServiceDownHtml)
 
       responseToOneBlink = {
         MaxCaseLookup_FoundInDatabase: 'Not found - service down',
@@ -110,7 +115,24 @@ export async function post(
       }
       
       return responseToOneBlink
+    
+    } else if (e instanceof Boom.Boom && e.output.statusCode === 401) {
+      // The authentication credentials are not valid. Occurs at least when the Power Automate URL is wrong.
 
+      notFoundServiceDownHtml =
+      `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
+      <p><br /></p>
+      <P>(Technical details: Power automate may be down or misconfigured. If Power automate is up check the Power automate url is set correctly at MaxCaseLookupAPI > .blinkmrc.json > POWER_AUTOMATE_HTTP_POST_URL.)</p>`
+
+      console.log(notFoundServiceDownHtml)
+
+      responseToOneBlink = {
+        MaxCaseLookup_FoundInDatabase: 'Not found - service down',
+        MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
+      }
+      
+      return responseToOneBlink
+      
     } else if (e instanceof Boom.Boom) {
       throw e
 
