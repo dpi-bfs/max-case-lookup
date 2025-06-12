@@ -40,6 +40,7 @@ export async function post(
     throw Boom.badRequest(`triggerElementName ${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
   }
 
+  var responseToOneBlink:ProjectTypes.ResponseToOneBlinkElements
   try {
     const data: ProjectTypes.FlowRequestData = {
       FormName: request.body.definition.name,
@@ -68,10 +69,10 @@ export async function post(
     if (flowResponseData.length === 0) {
       throw Boom.notFound(); // Raises a 404
     }
-    
-    const returnPacketToOB = ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId, triggerElementLabel) 
-    console.log("returnPacketToOB", returnPacketToOB)
-    return returnPacketToOB
+
+    responseToOneBlink = ReturnPacket.getPacket(flowResponseData, response.statusCode, MaxCaseItemId, triggerElementLabel) 
+    console.log("responseToOneBlink", responseToOneBlink)
+    return responseToOneBlink
     
     // Returning a well formed object, without error codes, is enough for the OneBlink UI's Data lookup element
     // to register this as valid.
@@ -98,7 +99,17 @@ export async function post(
       throw Boom.badRequest(notFoundMessageHtml)
 
     } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
-      throw Boom.badRequest(`The validation service was down. We did not receive a response from the server`)
+      const notFoundServiceDownHtml =
+      `<P>The lookup service was down. (Technical details: Max or Power Automate is probably down)</p>
+      <p><br /></p>
+      <P>Pleas continue to fill the form and submit without the lookup.</p>`
+
+      responseToOneBlink = {
+        MaxCaseLookup_FoundInDatabase: 'Not found - service down',
+        MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
+      }
+      
+      return responseToOneBlink
 
     } else if (e instanceof Boom.Boom) {
       throw e

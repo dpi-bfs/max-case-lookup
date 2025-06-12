@@ -30,6 +30,21 @@ export interface FlowResponseData {
   PropertyCity: string
 }
 
+type FoundResponse = {
+  MaxCaseLookup_FoundInDatabase: "Found";
+  MaxCaseLookup_ResponseFoundText: string;
+  MaxCaseLookup_ResponseNotFoundText?: never;
+};
+
+type NotFoundResponse = {
+  MaxCaseLookup_FoundInDatabase:
+    | "Not found - search returned nothing"
+    | "Not found - service down";
+  MaxCaseLookup_ResponseFoundText?: never;
+  MaxCaseLookup_ResponseNotFoundText: string;
+};
+
+export type ResponseToOneBlinkElements = FoundResponse | NotFoundResponse;
 
 /**
  * Interface syntax examples to hand

@@ -32,11 +32,12 @@ export function getPacket(
 
   // Null can be assigned to a OneBlink text element.
   var tableHtml = null
-  var maxCaseResponseTextHtml:string | null = null // We insert into a text element then an Info element references this
+  var maxCaseResponseTextHtml:string = "" // We insert into a text element then an Info element references this
   
-  let foundInDatabase = false
+  var foundInDatabase
+  var responseToOneBlinkElements: ProjectTypes.ResponseToOneBlinkElements;
   if (statusCode == 200) {
-    foundInDatabase = true
+    
 
     const tableRows = rows
       .map(r => `
@@ -48,7 +49,7 @@ export function getPacket(
         </tr>`)
       .join('');
 
-    tableHtml = 
+    tableHtml =
       `<table>
       <thead>
         <tr>
@@ -65,18 +66,27 @@ export function getPacket(
 
     maxCaseResponseTextHtml =
       `<p>For '${triggerElementLabel}' ${maxCaseItemId} we found a match with the following details.</p>
-      <p><br /></p>` 
+      <p><br /></p>`
       + tableHtml
+    
+    responseToOneBlinkElements = {
+      MaxCaseLookup_FoundInDatabase: "Found",
+      MaxCaseLookup_ResponseFoundText: maxCaseResponseTextHtml,
+    }
 
-  } // if (statusCode == 200)
+  } else {
+
+    responseToOneBlinkElements = {
+      MaxCaseLookup_FoundInDatabase: "Not found - search returned nothing",
+      MaxCaseLookup_ResponseNotFoundText: 'No match in our database.',
+    }
+    
+  } 
 
   console.log("Returning some data")
 
   // The value side must be a string, except for switches which can be a boolean
   // Use a string (and a radio button element) if you need three values: true, false, and null (not set)
-  return {
-    "MaxCaseLookup_FoundInDatabase": `${foundInDatabase}`,
-    "MaxCaseLookup_ResponseFoundText": maxCaseResponseTextHtml,
-    "ApiCodeVersionText": process.env.API_CODE_VERSION
-  }
+
+  return responseToOneBlinkElements
 }
