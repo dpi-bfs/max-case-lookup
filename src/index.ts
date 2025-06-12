@@ -1,5 +1,6 @@
 import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
+import { DateTime } from 'luxon';
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
 import * as ReturnPacket from './localLibrary/returnPacket.js';
@@ -41,15 +42,15 @@ export async function post(
   }
 
   var responseToOneBlink:ProjectTypes.ResponseToOneBlinkElements
+  const data: ProjectTypes.FlowRequestData = {
+    FormName: request.body.definition.name,
+    FormId: request.body.definition.id,
+    MaxCaseItemId: MaxCaseItemId,
+    MaxCaseLookup_MaxProjectName: submission.MaxCaseLookup_MaxProjectName,
+    MaxCaseLookup_MaxEnvironment: submission.MaxCaseLookup_MaxEnvironment,
+    MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
+  };
   try {
-    const data: ProjectTypes.FlowRequestData = {
-      FormName: request.body.definition.name,
-      FormId: request.body.definition.id,
-      MaxCaseItemId: MaxCaseItemId,
-      MaxCaseLookup_MaxProjectName: submission.MaxCaseLookup_MaxProjectName,
-      MaxCaseLookup_MaxEnvironment: submission.MaxCaseLookup_MaxEnvironment,
-      MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
-    };
     const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
     const headers: Record<string, string>[] = [
       { "x-power-automate-secret-key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
@@ -85,60 +86,69 @@ export async function post(
     // } 
   } catch (e: any) {
 
+    const nowLocalFormatted = DateTime.local().toFormat('yyyy-MM-dd HH:mm');
+
     /*     
       Boom messages that OneBlink will display
 
-      OB only recognizes Boom.badRequest() messages.At least it doesn't recognize Boom.notFound
+      OB only recognizes Boom.badRequest() messages. At least it doesn't recognize:
+        * Boom.notFound; nor
+        * throw Boom.badImplementation
       
       As this gets inserted into a <p>, use:
       <br /><br /> if you want paragraphs; and
       <br /> if you want an end of line 
     */
-    let notFoundServiceDownHtml; 
-    if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
-      const notFoundMessageHtml = `The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database.` + ' ' + maxCaseLookupResponseNotFoundAppendInfoDefaultValue
-      throw Boom.badRequest(notFoundMessageHtml)
+    // let notFoundServiceDownHtml; 
+    // if (e instanceof Boom.Boom && e.output && e.output.statusCode === 404) {
+    //   const notFoundMessageHtml = `The '${triggerElementLabel}', ${MaxCaseItemId}, could not be found in our database.` + ' ' + maxCaseLookupResponseNotFoundAppendInfoDefaultValue
+    //   throw Boom.badRequest(notFoundMessageHtml)
 
-    } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
-      // Simulate by choosing Fire Ant Carriers dev
+    // } else if (e instanceof Boom.Boom && e.output.statusCode === 502 && e.message.includes("The server did not receive a response from an upstream server")) {
+    //   // Simulate by choosing Fire Ant Carriers dev
 
-      notFoundServiceDownHtml =
-      `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
-      <p><br /></p>
-      <P>(Technical details: Max is probably down; but also check if Power Automate is down.)</p>`
+    //   notFoundServiceDownHtml =
+    //   `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
+    //   <p><br /></p>
+    //   <P>(Technical details: Max is probably down; but also check if Power Automate is down.)</p>`
 
-      console.log(notFoundServiceDownHtml)
+    //   console.log(notFoundServiceDownHtml)
+    //   console.error(e);
 
-      responseToOneBlink = {
-        MaxCaseLookup_FoundInDatabase: 'Not found - service down',
-        MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
-      }
+    //   responseToOneBlink = {
+    //     MaxCaseLookup_FoundInDatabase: 'Not found - service down',
+    //     MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
+    //   }
       
-      return responseToOneBlink
+    //   return responseToOneBlink
     
-    } else if (e instanceof Boom.Boom && e.output.statusCode === 401) {
-      // The authentication credentials are not valid. Occurs at least when the Power Automate URL is wrong.
+    // } else if (e instanceof Boom.Boom && e.output.statusCode === 401) {
+    //   // The authentication credentials are not valid. Occurs at least when the Power Automate URL is wrong.
 
-      notFoundServiceDownHtml =
-      `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
+    //   notFoundServiceDownHtml =
+    //   `<P>The lookup service was down. Please continue to fill the form and submit without the lookup.</p>
+    //   <p><br /></p>
+    //   <P>(Technical details: Power automate may be down or misconfigured. If Power automate is up check the Power automate url is set correctly at MaxCaseLookupAPI > .blinkmrc.json > POWER_AUTOMATE_HTTP_POST_URL.)</p>`
+
+    //   console.log(notFoundServiceDownHtml)
+    //   console.error(e);
+
+    //   responseToOneBlink = {
+    //     MaxCaseLookup_FoundInDatabase: 'Not found - service down',
+    //     MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
+    //   }
+      
+    //   return responseToOneBlink
+      
+    // } else {
+      const unanticipatedErrorHtml = 
+      `<P>An unanticipated error occurred at ${nowLocalFormatted}. Please screenshot this message, and provide via contact details found by following the help link in the footer at the bottom of the form.</p>
       <p><br /></p>
-      <P>(Technical details: Power automate may be down or misconfigured. If Power automate is up check the Power automate url is set correctly at MaxCaseLookupAPI > .blinkmrc.json > POWER_AUTOMATE_HTTP_POST_URL.)</p>`
-
-      console.log(notFoundServiceDownHtml)
-
-      responseToOneBlink = {
-        MaxCaseLookup_FoundInDatabase: 'Not found - service down',
-        MaxCaseLookup_ResponseNotFoundText: notFoundServiceDownHtml,
-      }
-      
-      return responseToOneBlink
-      
-    } else if (e instanceof Boom.Boom) {
-      throw e
-
-    } else {
+      <P>(Technical details: ${e.message})</p>`        
+        
+      console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);
-      throw Boom.badImplementation('uncaught error');
-    }
+      throw Boom.badRequest(unanticipatedErrorHtml);
+    // }
   }
 }

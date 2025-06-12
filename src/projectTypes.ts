@@ -21,6 +21,10 @@ export interface FlowRequestData {
   MaxCaseLookup_MaxSiteId: string
 }
 
+export interface ErrorData extends FlowRequestData {
+  ErrorMessageHtml: string,
+}
+
 export interface FlowResponseData {
   CaseItemId: number,
   SiteId: string
