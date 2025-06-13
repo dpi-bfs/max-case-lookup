@@ -5,6 +5,7 @@ import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
 import * as ReturnPacket from './localLibrary/returnPacket.js';
 import * as JsonTools from './localLibrary/jsonTools.js';
+import * as BfsDateTime from './BfsLibrary/dateTime.mjs'
 
 // import * as FormLookupReturnPacket from './formLookupReturnPacket.js'
 
@@ -86,7 +87,8 @@ export async function post(
     // } 
   } catch (e: any) {
 
-    const nowLocalFormatted = DateTime.local().toFormat('yyyy-MM-dd HH:mm');
+    // E.g. 2023-09-06 14:12 +10:00 AEST. A format better suitable for looking up OneBlink logs.
+    const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkConsoleReview(new Date());
 
     /*     
       Boom messages that OneBlink will display
