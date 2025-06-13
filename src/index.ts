@@ -1,6 +1,5 @@
 import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
-import { DateTime } from 'luxon';
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as ProjectTypes from './projectTypes.js'
 import * as ReturnPacket from './localLibrary/returnPacket.js';
@@ -87,8 +86,8 @@ export async function post(
     // } 
   } catch (e: any) {
 
-    // E.g. 2023-09-06 14:12 +10:00 AEST. A format better suitable for looking up OneBlink logs.
-    const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkConsoleReview(new Date());
+    // E.g. 13 June 2025, 14:58 AEST. A format better suitable for looking up OneBlink logs.
+    const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkLogReview(new Date());
 
     /*     
       Boom messages that OneBlink will display
