@@ -9,6 +9,7 @@ export async function sendMail(flowRequestData: FlowRequestData, businessEmail:s
 
   const SENDER_EMAIL_ADDRESS = process.env.SENDER_EMAIL_ADDRESS;
 
+  if (Logs.LogLevel <= Logs.LogLevelEnum.error) console.log("SENDER_EMAIL_ADDRESS", SENDER_EMAIL_ADDRESS);
   if (Logs.LogLevel <= Logs.LogLevelEnum.error) console.log("Generating business HTML template for email");
   const emailBusinessHtml = await generateEmailBusinessHtml(flowRequestData);
   if (Logs.LogLevel <= Logs.LogLevelEnum.privacyExposing) console.log("emailBusinessHtml", emailBusinessHtml);

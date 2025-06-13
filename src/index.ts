@@ -148,7 +148,7 @@ export async function post(
       <p><br /></p>
       <P>(Technical details: ${e.message})</p>`
     
-      OneBlinkToMailgun.sendMail(data, process.env.RECIPIENT_EMAIL_ADDRESS);
+      await OneBlinkToMailgun.sendMail(data, process.env.RECIPIENT_EMAIL_ADDRESS);
         
       console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);
