@@ -1,10 +1,11 @@
 import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
-import * as ProjectTypes from './projectTypes.js'
+import * as BfsDateTime from './BfsLibrary/dateTime.mjs'
+import * as OneBlinkToMailgun  from "./localLibrary/oneBlinkToMailgun.mjs";
 import * as ReturnPacket from './localLibrary/returnPacket.js';
 import * as JsonTools from './localLibrary/jsonTools.js';
-import * as BfsDateTime from './BfsLibrary/dateTime.mjs'
+import * as ProjectTypes from './projectTypes.js'
 
 // import * as FormLookupReturnPacket from './formLookupReturnPacket.js'
 
@@ -145,7 +146,9 @@ export async function post(
       const unanticipatedErrorHtml = 
       `<P>An unanticipated error occurred at ${nowLocalFormatted}. Please screenshot this message, and provide via contact details found by following the help link in the footer at the bottom of the form.</p>
       <p><br /></p>
-      <P>(Technical details: ${e.message})</p>`        
+      <P>(Technical details: ${e.message})</p>`
+    
+      OneBlinkToMailgun.sendMail(data, process.env.RECIPIENT_EMAIL_ADDRESS);
         
       console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);
