@@ -166,10 +166,13 @@ export async function post(
     
       errorData = {
         ...flowRequestData,
-        ErrorMessageHtml: unanticipatedErrorHtml 
+        ErrorMessageHtml: unanticipatedErrorHtml,
+        CriticalErrorCoolDownKey: criticalErrorCoolDownKey,
+        CriticalErrorCoolDownMinutes: criticalErrorCoolDownMinutes,
+        OneBlinkEnvironment: process.env.ONEBLINK_ENVIRONMENT!
       }
       
-      // Prevent us being spammed
+      // Prevent us being flooded with error emails
       await BfsCoolDownRegistry.runWithCoolDown(
         criticalErrorCoolDownKey,
         OneBlinkToMailgun.sendMail,

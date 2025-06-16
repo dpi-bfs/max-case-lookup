@@ -23,6 +23,9 @@ export interface FlowRequestData {
 
 export interface ErrorData extends FlowRequestData {
   ErrorMessageHtml: string,
+  CriticalErrorCoolDownKey: string,
+  CriticalErrorCoolDownMinutes: number
+  OneBlinkEnvironment: string,
 }
 
 export interface FlowResponseData {
