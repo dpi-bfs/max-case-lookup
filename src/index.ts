@@ -2,6 +2,7 @@ import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as BfsDateTime from './BfsLibrary/dateTime.mjs'
+import * as BfsOneBlinkSdkHelpers  from './BfsLibrary/oneblinkSdkHelpers.mjs'
 import * as OneBlinkToMailgun  from "./localLibrary/oneBlinkToMailgun.mjs";
 import * as ReturnPacket from './localLibrary/returnPacket.js';
 import * as JsonTools from './localLibrary/jsonTools.js';
@@ -89,7 +90,18 @@ export async function post(
 
     // E.g. 13 June 2025, 14:58 AEST. A format better suitable for looking up OneBlink logs.
     const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkLogReview(new Date());
-    var errorData: ProjectTypes.ErrorData;
+    let errorData: ProjectTypes.ErrorData;
+
+    const formsAppId: number = BfsOneBlinkSdkHelpers.getFormsAppIdSafely(request.body.definition.formsAppIds);
+    let errorRecipientEmailAddresses: string[] = await BfsOneBlinkSdkHelpers.getAppNotificationsAndDefaultEmails(formsAppId)
+
+    const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
+    // Fetch rawRecipients as an array
+    errorRecipientEmailAddresses = rawRecipients
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)  // removes empty strings
+    console.log('errorRecipientEmailAddresses', errorRecipientEmailAddresses);
 
     /*     
       Boom messages that OneBlink will display
@@ -154,7 +166,7 @@ export async function post(
         ErrorMessageHtml: unanticipatedErrorHtml 
       }
 
-      await OneBlinkToMailgun.sendMail(errorData, process.env.RECIPIENT_EMAIL_ADDRESS!);
+      await OneBlinkToMailgun.sendMail(errorData, errorRecipientEmailAddresses);
         
       console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);

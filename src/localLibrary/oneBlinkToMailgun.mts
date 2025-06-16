@@ -5,7 +5,7 @@ import * as Logs from "../BfsLibrary/logs.mjs"
 import * as ProjectTypes from '../projectTypes.js'
 import { generateEmailBusinessHtml } from "../templates/index.mjs";
 
-export async function sendMail(errorData: ProjectTypes.ErrorData, businessEmail:string): Promise<void>{
+export async function sendMail(errorData: ProjectTypes.ErrorData, businessEmails:string | string[]): Promise<void>{
 
   const SENDER_EMAIL_ADDRESS = process.env.SENDER_EMAIL_ADDRESS;
 
@@ -25,7 +25,7 @@ export async function sendMail(errorData: ProjectTypes.ErrorData, businessEmail:
   }
   const source = 'OneBlinkApi'
   const emailBusinessProps: MailGun.Props = {
-    to: businessEmail,
+    to: businessEmails,
     from: SENDER_EMAIL_ADDRESS, 
     subject: `${process.env.ENV_PREFIX}Critical error in MaxCaseLookupApi - Form: ${errorData.FormName}`,
     html: emailBusinessHtml,
