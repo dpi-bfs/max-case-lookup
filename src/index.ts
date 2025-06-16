@@ -43,7 +43,7 @@ export async function post(
   }
 
   var responseToOneBlink:ProjectTypes.ResponseToOneBlinkElements
-  const data: ProjectTypes.FlowRequestData = {
+  const flowRequestData: ProjectTypes.FlowRequestData = {
     FormName: request.body.definition.name,
     FormId: request.body.definition.id,
     MaxCaseItemId: MaxCaseItemId,
@@ -57,7 +57,7 @@ export async function post(
       { "x-power-automate-secret-key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
       { "origin": String(request.headers.origin) }
     ];
-    const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(data, url, headers)
+    const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(flowRequestData, url, headers)
     if (!response) {
       throw Boom.badRequest('Could not get a response in time. Please try again.')
     } 
@@ -89,6 +89,7 @@ export async function post(
 
     // E.g. 13 June 2025, 14:58 AEST. A format better suitable for looking up OneBlink logs.
     const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkLogReview(new Date());
+    var errorData: ProjectTypes.ErrorData;
 
     /*     
       Boom messages that OneBlink will display
@@ -144,11 +145,16 @@ export async function post(
       
     // } else {
       const unanticipatedErrorHtml = 
-      `<P>An unanticipated error occurred at ${nowLocalFormatted}. Please screenshot this message, and provide via contact details found by following the help link in the footer at the bottom of the form.</p>
+      `<P>An unanticipated error occurred at ${nowLocalFormatted}. Our technicians have been contacted.</p>
       <p><br /></p>
       <P>(Technical details: ${e.message})</p>`
     
-      await OneBlinkToMailgun.sendMail(data, process.env.RECIPIENT_EMAIL_ADDRESS);
+      errorData = {
+        ...flowRequestData,
+        ErrorMessageHtml: unanticipatedErrorHtml 
+      }
+
+      await OneBlinkToMailgun.sendMail(errorData, process.env.RECIPIENT_EMAIL_ADDRESS!);
         
       console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);
