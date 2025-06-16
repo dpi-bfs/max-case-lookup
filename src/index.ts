@@ -2,7 +2,8 @@ import { OneBlinkAPIHostingRequest } from '@oneblink/cli'
 import Boom from '@hapi/boom'
 import * as HttpWrapper from './BfsLibrary/httpWrapper.js'
 import * as BfsDateTime from './BfsLibrary/dateTime.mjs'
-import * as BfsOneBlinkSdkHelpers  from './BfsLibrary/oneblinkSdkHelpers.mjs'
+import * as BfsOneBlinkSdkHelpers from './BfsLibrary/oneblinkSdkHelpers.mjs'
+import * as BfsCoolDownRegistry from './BfsLibrary/coolDownRegistry.mjs'
 import * as OneBlinkToMailgun  from "./localLibrary/oneBlinkToMailgun.mjs";
 import * as ReturnPacket from './localLibrary/returnPacket.js';
 import * as JsonTools from './localLibrary/jsonTools.js';
@@ -95,12 +96,12 @@ export async function post(
     const formsAppId: number = BfsOneBlinkSdkHelpers.getFormsAppIdSafely(request.body.definition.formsAppIds);
     let errorRecipientEmailAddresses: string[] = await BfsOneBlinkSdkHelpers.getAppNotificationsAndDefaultEmails(formsAppId)
 
-    const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
-    // Fetch rawRecipients as an array
-    errorRecipientEmailAddresses = rawRecipients
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)  // removes empty strings
+    // const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
+    // // Fetch rawRecipients as an array
+    // errorRecipientEmailAddresses = rawRecipients
+    //   .split(',')
+    //   .map(s => s.trim())
+    //   .filter(Boolean)  // removes empty strings
     console.log('errorRecipientEmailAddresses', errorRecipientEmailAddresses);
 
     /*     
