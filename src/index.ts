@@ -95,13 +95,15 @@ export async function post(
 
     const formsAppId: number = BfsOneBlinkSdkHelpers.getFormsAppIdSafely(request.body.definition.formsAppIds);
     let errorRecipientEmailAddresses: string[] = await BfsOneBlinkSdkHelpers.getAppNotificationsAndDefaultEmails(formsAppId)
+    const criticalErrorCoolDownKey = flowRequestData.FormId + '-' + flowRequestData.MaxCaseLookup_MaxProjectName + '-' + flowRequestData.MaxCaseLookup_MaxEnvironment
+    const criticalErrorCoolDownMinutes = parseInt(process.env.CRITICAL_ERROR_COOL_DOWN_MINUTES!)
 
-    // const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
-    // // Fetch rawRecipients as an array
-    // errorRecipientEmailAddresses = rawRecipients
-    //   .split(',')
-    //   .map(s => s.trim())
-    //   .filter(Boolean)  // removes empty strings
+    // Uncomment For testing the recipients rather than spamming those listed in the App's notification list
+    const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
+    errorRecipientEmailAddresses = rawRecipients
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)  // removes empty strings
     console.log('errorRecipientEmailAddresses', errorRecipientEmailAddresses);
 
     /*     
@@ -166,9 +168,16 @@ export async function post(
         ...flowRequestData,
         ErrorMessageHtml: unanticipatedErrorHtml 
       }
+      
+      // Prevent us being spammed
+      await BfsCoolDownRegistry.runWithCoolDown(
+        criticalErrorCoolDownKey,
+        OneBlinkToMailgun.sendMail,
+        criticalErrorCoolDownMinutes,
+        errorData,
+        errorRecipientEmailAddresses,
+      )
 
-      await OneBlinkToMailgun.sendMail(errorData, errorRecipientEmailAddresses);
-        
       console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
       console.error(e);
       throw Boom.badRequest(unanticipatedErrorHtml);
