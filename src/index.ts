@@ -51,7 +51,16 @@ export async function post(
     MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
   };
   try {
-    const url = process.env.POWER_AUTOMATE_HTTP_POST_URL!;
+    
+    let url;
+    if (flowRequestData.MaxCaseLookup_MaxEnvironment == "dev") {
+      url = process.env.POWER_AUTOMATE_HTTP_POST_URL_DEV
+    } else if (flowRequestData.MaxCaseLookup_MaxEnvironment == "prod") {
+      url = process.env.POWER_AUTOMATE_HTTP_POST_URL_PROD
+    } else {
+      throw Boom.badRequest(`flowRequestData.MaxCaseLookup_MaxEnvironment expected to be 'dev' or 'prod' but was ${flowRequestData.MaxCaseLookup_MaxEnvironment}`);
+    }
+
     const headers: Record<string, string>[] = [
       { "x-power-automate-secret-key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
       { "origin": String(request.headers.origin) }
