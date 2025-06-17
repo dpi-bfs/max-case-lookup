@@ -51,7 +51,7 @@ export async function post(
     MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
   };
   try {
-    
+
     let url;
     if (flowRequestData.MaxCaseLookup_MaxEnvironment == "dev") {
       url = process.env.POWER_AUTOMATE_HTTP_POST_URL_DEV
@@ -65,7 +65,7 @@ export async function post(
       { "x-power-automate-secret-key-id": process.env.POWER_AUTOMATE_SECRET_KEY! },
       { "origin": String(request.headers.origin) }
     ];
-    const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(flowRequestData, url, headers)
+    const response: HttpWrapper.DatabaseResponse = await HttpWrapper.postData(flowRequestData, url!, headers)
     if (!response) {
       throw Boom.badRequest('Could not get a response in time. Please try again.')
     }
