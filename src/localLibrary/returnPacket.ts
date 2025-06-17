@@ -36,9 +36,9 @@ export function getPacket(
   
   var foundInDatabase
   var responseToOneBlinkElements: ProjectTypes.ResponseToOneBlinkElements;
+
   if (statusCode == 200) {
     
-
     const tableRows = rows
       .map(r => `
         <tr>
@@ -70,14 +70,12 @@ export function getPacket(
       + tableHtml
     
     responseToOneBlinkElements = {
-      MaxCaseLookup_FoundInDatabase: "Found",
       MaxCaseLookup_ResponseFoundText: maxCaseResponseTextHtml,
     }
 
   } else {
 
     responseToOneBlinkElements = {
-      MaxCaseLookup_FoundInDatabase: "Not found - search returned nothing",
       MaxCaseLookup_ResponseNotFoundText: 'No match in our database.',
     }
     

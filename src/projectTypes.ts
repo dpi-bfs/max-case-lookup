@@ -47,14 +47,12 @@ type NotFoundErrorType =
   | CriticalErrorType
 
 type FoundResponse = {
-  MaxCaseLookup_FoundInDatabase: "Found" | NotFoundErrorType;
   MaxCaseLookup_ResponseFoundText: string;
   MaxCaseLookup_ResponseNotFoundText?: never;
 };
 
 
 export type NotFoundResponse = {
-  MaxCaseLookup_FoundInDatabase: NotFoundErrorType;
   MaxCaseLookup_ResponseFoundText?: never;
   MaxCaseLookup_ResponseNotFoundText: string;
 };
