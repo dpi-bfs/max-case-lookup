@@ -45,7 +45,6 @@ export async function handleError(
     notFoundResponseHtml = getNotFoundResponseHtml(errorMessageAdviceToUsers, errorMessageTechnicalDetailHtml);
 
   }
-  console.error("notFoundResponseHtml", notFoundResponseHtml);
 
   const errorData: ProjectTypes.ErrorData = {
     ...flowRequestData,
