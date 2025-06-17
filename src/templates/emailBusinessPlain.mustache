@@ -8,7 +8,9 @@
 </blockquote>
 <hr />
 
-<p>Possibilities include:</p>
+<p>A critical error in this context is an error that someone needs to identify the cause of, and possibly fix the cause of.</p>
+
+<p>Critical error possibilities include:</p>
 <ul>
   <li>Max is down</li>
   <li>Power Automate is down</li>
@@ -24,4 +26,4 @@
   <li>MaxCaseLookup_MaxEnvironment: {{MaxCaseLookup_MaxEnvironment}}</li>
 </ul>
 
-<p>To prevent your email inbox being flooded with these critical error messages, the error messages are suppressed for the next {{CriticalErrorCoolDownMinutes}} minutes, where sharing the following key: {{CriticalErrorCoolDownKey}} (FormId, MaxProjectName, MaxEnvironment). However all errors will be logged to the OneBlink console. See OneBlink Console > Developer Tools > API Hosting > nswfoodauthority-max-case-lookup.api.oneblink.io > {{OneBlinkEnvironment}}.</p>
+<p>To prevent your email inbox being flooded, subsequent critical error messages are not emailed for the next <strong>{{CriticalErrorCoolDownMinutes}} minutes</strong>, where sharing the following key: {{CriticalErrorCoolDownKey}} (FormId, MaxProjectName, MaxEnvironment). However all errors will be logged to the OneBlink console. See OneBlink Console > Developer Tools > API Hosting > nswfoodauthority-max-case-lookup.api.oneblink.io > {{OneBlinkEnvironment}}.</p>

@@ -43,10 +43,11 @@ type FoundResponse = {
   MaxCaseLookup_ResponseNotFoundText?: never;
 };
 
-type NotFoundResponse = {
+export type NotFoundResponse = {
   MaxCaseLookup_FoundInDatabase:
     | "Not found - search returned nothing"
-    | "Not found - service down";
+    | "Not found - critical error - service down"
+    | "Not found - critical error - unanticipated error";
   MaxCaseLookup_ResponseFoundText?: never;
   MaxCaseLookup_ResponseNotFoundText: string;
 };

@@ -7,9 +7,12 @@ import * as BfsCoolDownRegistry from './BfsLibrary/coolDownRegistry.mjs'
 import * as OneBlinkToMailgun  from "./localLibrary/oneBlinkToMailgun.mjs";
 import * as ReturnPacket from './localLibrary/returnPacket.js';
 import * as JsonTools from './localLibrary/jsonTools.js';
+import * as CriticalErrorCentralHandler from './localLibrary/criticalErrorCentralHandler.mjs'
 import * as ProjectTypes from './projectTypes.js'
 
 // import * as FormLookupReturnPacket from './formLookupReturnPacket.js'
+
+
 
 export async function post(
   request: OneBlinkAPIHostingRequest<{
@@ -21,8 +24,9 @@ export async function post(
 
   // console.log("request.body", request.body);
 
-  const triggerElementName = request.body.element.name;
-  const triggerElementLabel = request.body.element.label;
+  const triggerElement = request.body.element
+  const triggerElementName = triggerElement.name;
+  const triggerElementLabel = triggerElement.label;
 
   console.log("triggerElementName", triggerElementName);
   
@@ -96,7 +100,6 @@ export async function post(
     const formsAppId: number = BfsOneBlinkSdkHelpers.getFormsAppIdSafely(request.body.definition.formsAppIds);
     let errorRecipientEmailAddresses: string[] = await BfsOneBlinkSdkHelpers.getAppNotificationsAndDefaultEmails(formsAppId)
     const criticalErrorCoolDownKey = flowRequestData.FormId + '-' + flowRequestData.MaxCaseLookup_MaxProjectName + '-' + flowRequestData.MaxCaseLookup_MaxEnvironment
-    const criticalErrorCoolDownMinutes = parseInt(process.env.CRITICAL_ERROR_COOL_DOWN_MINUTES!)
 
     // Uncomment For testing the recipients rather than spamming those listed in the App's notification list
     const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
@@ -159,31 +162,21 @@ export async function post(
     //   return responseToOneBlink
       
     // } else {
-      const unanticipatedErrorHtml = 
-      `<P>An unanticipated error occurred at ${nowLocalFormatted}. Our technicians have been contacted.</p>
-      <p><br /></p>
-      <P>(Technical details: ${e.message})</p>`
-    
-      errorData = {
-        ...flowRequestData,
-        ErrorMessageHtml: unanticipatedErrorHtml,
-        CriticalErrorCoolDownKey: criticalErrorCoolDownKey,
-        CriticalErrorCoolDownMinutes: criticalErrorCoolDownMinutes,
-        OneBlinkEnvironment: process.env.ONEBLINK_ENVIRONMENT!
-      }
-      
-      // Prevent us being flooded with error emails
-      await BfsCoolDownRegistry.runWithCoolDown(
+      const unanticipatedErrorHtml =
+        `<P>An unanticipated error occurred at ${nowLocalFormatted}. Our technicians have been contacted.</p>
+        <p><br /></p>
+        <P>(Technical details: ${e.message})</p>`
+
+      const responseToOneBlink = await CriticalErrorCentralHandler.handleError(
+        unanticipatedErrorHtml,
+        flowRequestData,
         criticalErrorCoolDownKey,
-        OneBlinkToMailgun.sendMail,
-        criticalErrorCoolDownMinutes,
-        errorData,
         errorRecipientEmailAddresses,
+        e,
+        triggerElement
       )
 
-      console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
-      console.error(e);
-      throw Boom.badRequest(unanticipatedErrorHtml);
+      if (responseToOneBlink) return responseToOneBlink
     // }
   }
 }
