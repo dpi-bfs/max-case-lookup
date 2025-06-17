@@ -1,6 +1,7 @@
 import Boom from '@hapi/boom'
 import * as ProjectTypes from '../projectTypes.js'
 import * as BfsCoolDownRegistry from '../BfsLibrary/coolDownRegistry.mjs'
+import * as BfsDateTime from '../BfsLibrary/dateTime.mjs'
 import * as OneBlinkToMailgun from "./oneBlinkToMailgun.mjs";
 
 function isOnCriticalErrorUserCanSubmit(element: { customCssClasses?: string[] },): boolean {
@@ -23,9 +24,11 @@ export async function handleError(
   triggerElement: Record<string, any>
 ): Promise<ProjectTypes.NotFoundResponse> {
 
+  // E.g. 13 June 2025, 14:58 AEST. A format better suitable for looking up OneBlink logs.
+  const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkLogReview(new Date());
   let notFoundResponseHtml;
   let errorMessageAdviceToUsers;
-  const errorMessageTechnicalDetailHtml = `<P>(Technical details. CriticalErrorType: ${criticalErrorType}; ErrorMessage: ${e.message})</p>`
+  const errorMessageTechnicalDetailHtml = `<P>(Technical details. At: ${nowLocalFormatted}; CriticalErrorType: ${criticalErrorType}; ErrorMessage: ${e.message})</p>`
   console.error(e);
 
   const isOnCriticalErrorUserCanSubmitFlag: boolean = isOnCriticalErrorUserCanSubmit(triggerElement)
