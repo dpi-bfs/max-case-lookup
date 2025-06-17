@@ -42,10 +42,10 @@ export function getPacket(
     const tableRows = rows
       .map(r => `
         <tr>
-          <td>${r.IdentifierTypeValue}</td>
-          <td>${r.PicHolding}</td>
-          <td>${r.PropertyAddress}</td>
-          <td>${r.PropertyCity}</td>
+          <td>${r.IdentifierTypeValue ?? ''}</td>
+          <td>${r.PicHolding ?? ''}</td>
+          <td>${r.PropertyAddress ?? ''}</td>
+          <td>${r.PropertyCity ?? ''}</td>
         </tr>`)
       .join('');
 
