@@ -8,8 +8,14 @@ function isOnCriticalErrorUserCanSubmit(element: { customCssClasses?: string[] }
   return element.customCssClasses?.includes('max-case-lookup--critical-error--user-can-submit',) ?? false
 }
 
+function getNotFoundResponseHtml(errorMessageAdviceToUsers: string, errorMessageTechnicalDetailHtml: string): string {
+  const notFoundResponseHtml = errorMessageAdviceToUsers + `<p><br /></p>` + errorMessageTechnicalDetailHtml;
+  console.error("notFoundResponseHtml", notFoundResponseHtml)
+  return notFoundResponseHtml
+}
+
 export async function handleError(
-  unanticipatedErrorHtml: string,
+  criticalErrorType: ProjectTypes.CriticalErrorType,
   flowRequestData: ProjectTypes.FlowRequestData,
   criticalErrorCoolDownKey: string,
   errorRecipientEmailAddresses: string[],
@@ -17,13 +23,34 @@ export async function handleError(
   triggerElement: Record<string, any>
 ): Promise<ProjectTypes.NotFoundResponse> {
 
-    const errorData: ProjectTypes.ErrorData = {
-      ...flowRequestData,
-      ErrorMessageHtml: unanticipatedErrorHtml,
-      CriticalErrorCoolDownKey: criticalErrorCoolDownKey,
-      CriticalErrorCoolDownMinutes: parseInt(process.env.CRITICAL_ERROR_COOL_DOWN_MINUTES!),
-      OneBlinkEnvironment: process.env.ONEBLINK_ENVIRONMENT!
-    }
+  let notFoundResponseHtml;
+  let errorMessageAdviceToUsers;
+  const errorMessageTechnicalDetailHtml = `<P>(Technical details. CriticalErrorType: ${criticalErrorType}; ErrorMessage: ${e.message})</p>`
+  console.error(e);
+
+  const isOnCriticalErrorUserCanSubmitFlag: boolean = isOnCriticalErrorUserCanSubmit(triggerElement)
+  console.log('isOnCriticalErrorUserCanSubmitFlag', isOnCriticalErrorUserCanSubmitFlag);
+
+  if (isOnCriticalErrorUserCanSubmitFlag) {
+    errorMessageAdviceToUsers =
+      "<P>A critical error occurred that's our fault. Our technicians have been contacted. Please continue to fill the form and submit without the lookup. We apologise for the inconvenience.</p>";
+    notFoundResponseHtml = getNotFoundResponseHtml(errorMessageAdviceToUsers, errorMessageTechnicalDetailHtml);
+
+  } else {
+    errorMessageAdviceToUsers =
+      "<P>A critical error occurred that's our fault. Our technicians have been contacted. You won't be able to submit. In a few hours try refreshing the form (F5 on your keyboard). We apologise for the inconvenience.</p>";
+    notFoundResponseHtml = getNotFoundResponseHtml(errorMessageAdviceToUsers, errorMessageTechnicalDetailHtml);
+
+  }
+  console.error("notFoundResponseHtml", notFoundResponseHtml);
+
+  const errorData: ProjectTypes.ErrorData = {
+    ...flowRequestData,
+    NotFoundResponseHtml: notFoundResponseHtml,
+    CriticalErrorCoolDownKey: criticalErrorCoolDownKey,
+    CriticalErrorCoolDownMinutes: parseInt(process.env.CRITICAL_ERROR_COOL_DOWN_MINUTES!),
+    OneBlinkEnvironment: process.env.ONEBLINK_ENVIRONMENT!
+  }
 
   // Prevent us being flooded with error emails
   await BfsCoolDownRegistry.runWithCoolDown(
@@ -34,28 +61,18 @@ export async function handleError(
     errorRecipientEmailAddresses,
   )
 
-  console.error(e);
-  console.error("unanticipatedErrorHtml", unanticipatedErrorHtml)
-
-  const isOnCriticalErrorUserCanSubmitFlag: boolean = isOnCriticalErrorUserCanSubmit(triggerElement)
-  console.log('isOnCriticalErrorUserCanSubmitFlag', isOnCriticalErrorUserCanSubmitFlag);
-  let notFoundResponseHtml;
-
   if (isOnCriticalErrorUserCanSubmitFlag) {
-    notFoundResponseHtml =
-      `<P>Please continue to fill the form and submit without the lookup.</p>
-          <p><br /></p>`
-      + unanticipatedErrorHtml
-
-    console.error("notFoundResponseHtml", notFoundResponseHtml)
-
     const responseToOneBlink: ProjectTypes.NotFoundResponse = {
       MaxCaseLookup_FoundInDatabase: 'Not found - critical error - unanticipated error',
       MaxCaseLookup_ResponseNotFoundText: notFoundResponseHtml,
     }
     return responseToOneBlink
+
   } else {
-    throw Boom.badRequest(unanticipatedErrorHtml);
+
+    // We don't return any object to OB that spits data to elements, rather we BOOM and OB handles this as 
+    // As message below the lookup element.
+    throw Boom.badRequest(notFoundResponseHtml);
   }
 
 }

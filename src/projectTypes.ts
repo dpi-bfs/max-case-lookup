@@ -22,7 +22,7 @@ export interface FlowRequestData {
 }
 
 export interface ErrorData extends FlowRequestData {
-  ErrorMessageHtml: string,
+  NotFoundResponseHtml: string,
   CriticalErrorCoolDownKey: string,
   CriticalErrorCoolDownMinutes: number
   OneBlinkEnvironment: string,
@@ -37,17 +37,24 @@ export interface FlowResponseData {
   PropertyCity: string
 }
 
+export type CriticalErrorType = 
+| "Not found - critical error - service down - max"
+| "Not found - critical error - service down - power automate"
+| "Not found - critical error - unanticipated error";
+
+type NotFoundErrorType =
+  | "Not found - search returned nothing"
+  | CriticalErrorType
+
 type FoundResponse = {
-  MaxCaseLookup_FoundInDatabase: "Found";
+  MaxCaseLookup_FoundInDatabase: "Found" | NotFoundErrorType;
   MaxCaseLookup_ResponseFoundText: string;
   MaxCaseLookup_ResponseNotFoundText?: never;
 };
 
+
 export type NotFoundResponse = {
-  MaxCaseLookup_FoundInDatabase:
-    | "Not found - search returned nothing"
-    | "Not found - critical error - service down"
-    | "Not found - critical error - unanticipated error";
+  MaxCaseLookup_FoundInDatabase: NotFoundErrorType;
   MaxCaseLookup_ResponseFoundText?: never;
   MaxCaseLookup_ResponseNotFoundText: string;
 };

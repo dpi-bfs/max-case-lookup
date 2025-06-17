@@ -1,10 +1,10 @@
 <p>Hi BFS tech folk,</p>
 
-<p>There was a critical error in the MaxCaseLookupApi. This was presented to the user on the form:</p>
+<p>There was a critical error in the MaxCaseLookupApi. The following was presented to the user:</p>
 
 <hr />
 <blockquote>
-{{{ErrorMessageHtml}}}
+{{{NotFoundResponseHtml}}}
 </blockquote>
 <hr />
 
@@ -19,14 +19,14 @@
 
 <p>Particulars:</p>
 <ul>
+  <li>OneBlinkEnvironment: {{OneBlinkEnvironment}}</li>
   <li>FormName: {{FormName}}</li>
   <li>FormId: {{FormId}}</li>
-  <li>MaxCaseItemId: {{MaxCaseItemId}}</li>
-  <li>MaxCaseLookup_MaxProjectName: {{MaxCaseLookup_MaxProjectName}}</li>
   <li>MaxCaseLookup_MaxEnvironment: {{MaxCaseLookup_MaxEnvironment}}</li>
-  <li>OneBlinkEnvironment: {{OneBlinkEnvironment}}</li>
+  <li>MaxCaseLookup_MaxProjectName: {{MaxCaseLookup_MaxProjectName}}</li>
+  <li>MaxCaseItemId: {{MaxCaseItemId}}</li>
 </ul>
 
 <p>To prevent your email inbox being flooded, subsequent critical error messages are not emailed for the next <strong>{{CriticalErrorCoolDownMinutes}} minutes</strong>, where sharing the following key: {{CriticalErrorCoolDownKey}} (FormId, MaxProjectName, MaxEnvironment). However all errors will be logged to the OneBlink console. See OneBlink Console > Developer Tools > API Hosting > nswfoodauthority-max-case-lookup.api.oneblink.io > {{OneBlinkEnvironment}}.</p>
 
-<p>You've been emailed because your email was listed in the notification list of the form's associated App (OneBlink Console > {{OneBlinkEnvironment}} > Apps > [Associated App] > Settings > Notifications and/or, if enabled in the App, Default Email Addresses).</p>
+<p>You've been emailed because you are listed in the notification list of the form's associated App (OneBlink Console > {{OneBlinkEnvironment}} > Apps > [Associated App] > Settings > Notifications and/or, if enabled in the App, Default Email Addresses).</p>

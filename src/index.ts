@@ -100,6 +100,7 @@ export async function post(
     const formsAppId: number = BfsOneBlinkSdkHelpers.getFormsAppIdSafely(request.body.definition.formsAppIds);
     let errorRecipientEmailAddresses: string[] = await BfsOneBlinkSdkHelpers.getAppNotificationsAndDefaultEmails(formsAppId)
     const criticalErrorCoolDownKey = flowRequestData.FormId + '-' + flowRequestData.MaxCaseLookup_MaxProjectName + '-' + flowRequestData.MaxCaseLookup_MaxEnvironment
+    let criticalErrorType: ProjectTypes.CriticalErrorType;
 
     // Uncomment For testing the recipients rather than spamming those listed in the App's notification list
     const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
@@ -162,13 +163,10 @@ export async function post(
     //   return responseToOneBlink
       
     // } else {
-      const unanticipatedErrorHtml =
-        `<P>An unanticipated error occurred at ${nowLocalFormatted}. Our technicians have been contacted.</p>
-        <p><br /></p>
-        <P>(Technical details: ${e.message})</p>`
 
+      criticalErrorType = 'Not found - critical error - unanticipated error';
       const responseToOneBlink = await CriticalErrorCentralHandler.handleError(
-        unanticipatedErrorHtml,
+        criticalErrorType,
         flowRequestData,
         criticalErrorCoolDownKey,
         errorRecipientEmailAddresses,
