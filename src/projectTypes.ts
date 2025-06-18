@@ -11,15 +11,24 @@ import * as OneBlinkHelpers from "./BfsLibrary/oneblinkSdkHelpers.mjs"
  * allows many form elements to be changed without breaking typechecking.
  */
 
+export type SimulateErrorInFlowType = 
+  | "TerminateOnly"
+  | "TerminateAfterExplicitHttpResponse"
+  | "No"
+  | null
 
+export type MaxCaseLookup_MaxEnvironmentType =
+  | "dev"
+  | "prod"
 
 export interface FlowRequestData {
   FormName: string,
   FormId: number,
   MaxCaseItemId: number,
   MaxCaseLookup_MaxProjectName: string,
-  MaxCaseLookup_MaxEnvironment: string,
+  MaxCaseLookup_MaxEnvironment: MaxCaseLookup_MaxEnvironmentType,
   MaxCaseLookup_MaxSiteId: string
+  SimulateErrorInFlowType?: SimulateErrorInFlowType
 }
 
 export interface ErrorData extends FlowRequestData {

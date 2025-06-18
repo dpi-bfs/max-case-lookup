@@ -47,9 +47,11 @@ export async function post(
     FormId: request.body.definition.id,
     MaxCaseItemId: MaxCaseItemId,
     MaxCaseLookup_MaxProjectName: submission.MaxCaseLookup_MaxProjectName,
-    MaxCaseLookup_MaxEnvironment: submission.MaxCaseLookup_MaxEnvironment,
-    MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId
+    MaxCaseLookup_MaxEnvironment: submission.MaxCaseLookup_MaxEnvironment as ProjectTypes.MaxCaseLookup_MaxEnvironmentType,
+    MaxCaseLookup_MaxSiteId: submission.MaxCaseLookup_MaxSiteId,
+    SimulateErrorInFlowType: submission.SimulateErrorInFlowType as ProjectTypes.SimulateErrorInFlowType
   };
+
   try {
 
     let url;
