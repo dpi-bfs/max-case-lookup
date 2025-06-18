@@ -15,6 +15,20 @@ function getNotFoundResponseHtml(errorMessageAdviceToUsers: string, errorMessage
   return notFoundResponseHtml
 }
 
+function getStatusCode(err: unknown): number | 'N/A' {
+  if (Boom.isBoom(err)) {
+    // Boom v6+ always sets payload.statusCode; the fallback is for older versions
+    return err.output.payload?.statusCode
+        ?? err.output.statusCode
+  }
+  // Non-Boom errors that expose statusCode directly 
+  if (typeof (err as any).statusCode === 'number') {
+    return (err as any).statusCode
+  }
+  // fallback
+  return 'N/A'                                             
+}
+
 export async function handleError(
   criticalErrorType: ProjectTypes.CriticalErrorType,
   flowRequestData: ProjectTypes.FlowRequestData,
@@ -28,7 +42,7 @@ export async function handleError(
   const nowLocalFormatted = BfsDateTime.getDateFormattedForOneBlinkLogReview(new Date());
   let notFoundResponseHtml;
   let errorMessageAdviceToUsers;
-  const errorMessageTechnicalDetailHtml = `<P>(Technical details. At: ${nowLocalFormatted}; CriticalErrorType: ${criticalErrorType}; ErrorMessage: ${e.message})</p>`
+  const errorMessageTechnicalDetailHtml = `<P>(Technical details. At: ${nowLocalFormatted}; CriticalErrorType: ${criticalErrorType}; StatusCode: ${getStatusCode(e)}; ErrorMessage: ${e.message};)</p>`
   console.error(e);
 
   const isOnCriticalErrorUserCanSubmitFlag: boolean = isOnCriticalErrorUserCanSubmit(triggerElement)

@@ -28,7 +28,7 @@ export interface FlowRequestData {
   MaxCaseLookup_MaxProjectName: string,
   MaxCaseLookup_MaxEnvironment: MaxCaseLookup_MaxEnvironmentType,
   MaxCaseLookup_MaxSiteId: string
-  SimulateErrorInFlowType?: SimulateErrorInFlowType
+  SimulateErrorInFlow?: SimulateErrorInFlowType
 }
 
 export interface ErrorData extends FlowRequestData {
