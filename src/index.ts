@@ -105,11 +105,11 @@ export async function post(
     let criticalErrorType: ProjectTypes.CriticalErrorType;
 
     // Uncomment For testing the recipients rather than spamming those listed in the App's notification list
-    const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
-    errorRecipientEmailAddresses = rawRecipients
-      .split(',')
-      .map(s => s.trim())
-      .filter(Boolean)  // removes empty strings
+    // const rawRecipients = process.env.RECIPIENT_EMAIL_ADDRESSES!
+    // errorRecipientEmailAddresses = rawRecipients
+    //   .split(',')
+    //   .map(s => s.trim())
+    //   .filter(Boolean)  // removes empty strings
     
     console.log('errorRecipientEmailAddresses', errorRecipientEmailAddresses);
 
