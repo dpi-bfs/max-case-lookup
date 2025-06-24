@@ -34,7 +34,6 @@ export function getPacket(
   var tableHtml = null
   var maxCaseResponseTextHtml:string = "" // We insert into a text element then an Info element references this
   
-  var foundInDatabase
   var responseToOneBlinkElements: ProjectTypes.ResponseToOneBlinkElements;
 
   if (statusCode == 200) {

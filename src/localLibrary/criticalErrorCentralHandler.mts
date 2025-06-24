@@ -79,7 +79,6 @@ export async function handleError(
 
   if (isOnCriticalErrorUserCanSubmitFlag) {
     const responseToOneBlink: ProjectTypes.NotFoundResponse = {
-      MaxCaseLookup_FoundInDatabase: 'Not found - critical error - unanticipated error',
       MaxCaseLookup_ResponseNotFoundText: notFoundResponseHtml,
     }
     return responseToOneBlink
