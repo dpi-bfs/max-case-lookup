@@ -32,10 +32,12 @@ export async function post(
   const MaxCaseItemId = parseInt(submission[triggerElementName]);
   console.log(`triggerElementName: ${triggerElementName} (MaxCaseItemId)`, MaxCaseItemId);
 
-  const allElements = JsonTools.flattenElements(request.body.definition.elements)
-  const maxCaseLookupResponseNotFoundAppendInfoDefaultValue = allElements.find(
-    (el: { name: string; }) => el.name === "MaxCaseLookup_ResponseNotFound_AppendInfo"
-  )?.defaultValue;
+  const target = BfsOneBlinkSdkHelpers.findElementByName(
+    request.body.definition.elements,
+    "MaxCaseLookup_ResponseNotFound_AppendInfo",
+  );
+  const maxCaseLookupResponseNotFoundAppendInfoDefaultValue =
+    (target as { defaultValue?: unknown })?.defaultValue;
 
   if (!MaxCaseItemId) {
     throw Boom.badRequest(`triggerElementName ${triggerElementName} (MaxCaseItemId) isn't giving us a value: ${MaxCaseItemId}`)
