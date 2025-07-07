@@ -27,7 +27,7 @@ export async function sendMail(errorData: ProjectTypes.ErrorData, businessEmails
   const emailBusinessProps: MailGun.Props = {
     to: businessEmails,
     from: SENDER_EMAIL_ADDRESS, 
-    subject: `${process.env.ENV_PREFIX}Critical error in MaxCaseLookupApi - Form: ${errorData.FormName}`,
+    subject: `${process.env.ENV_PREFIX ?? ''}Critical error in MaxCaseLookupApi - Form: ${errorData.FormName}`,
     html: emailBusinessHtml,
   }
 
